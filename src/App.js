@@ -1,24 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import MyNavbar from "./Components/Navbar"; // Gantilah dengan lokasi sebenarnya
+import Home from "./Pages/Home";
+import OurServices from "./Pages/Services";
+import Events from "./Pages/Events";
+import News from "./Pages/News";
+import AboutUs from "./Pages/About";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        <MyNavbar />
+
+        <Routes>
+          <Route path="/" element={<Home />} /> {/* Ini adalah halaman utama */}
+          <Route path="/our-services" element={<OurServices />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/about-us" element={<AboutUs />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
