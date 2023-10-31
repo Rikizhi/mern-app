@@ -1,11 +1,13 @@
 import React from 'react';
+import MyNavbar from '../../Components/Navbar';
 
-function OurServices() {
+const OurServices = () => {
   return (
-    <div>
+    <>
+      <MyNavbar />
       <h1>Fasilitas PPDB</h1>
       <p>Kami menyediakan berbagai fasilitas yang berkualitas.</p>
-    </div>
+    </>
   );
 }
 
