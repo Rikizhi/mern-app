@@ -2,7 +2,8 @@ import { createContext, useContext, useReducer } from "react";
 import reducer from './Reducer';
 
 const initialState = {
-    currentUser:null,
+    currentUser: null,
+    openLogin: false
 };
 
 const Context = createContext(initialState);

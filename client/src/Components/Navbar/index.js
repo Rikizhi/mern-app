@@ -2,10 +2,8 @@ import React from "react";
 import { useValue } from "../../Context/ContextProvider";
 import { AppBar, Box, Button, Container, IconButton, Toolbar, Typography } from "@mui/material";
 import { Lock, Menu } from "@mui/icons-material";
-import photoURL from "../../profile.jpeg";
-import UserIcons from "../User";
-
-const user = { name: "test", photoURL };
+import UserIcons from "../User/UserIcons";
+import { createTheme, ThemeProvider } from "@mui/material/styles"
 
 const NavBar = () => {
   const {
@@ -13,7 +11,21 @@ const NavBar = () => {
     dispatch,
   } = useValue();
 
+  const theme = createTheme({
+    components: {
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#00B4D8', // Ganti warna latar belakang sesuai keinginan
+          },
+        },
+      },
+    },
+  });
+  
+
   return (
+    <ThemeProvider theme={theme}>
     <AppBar>
       <Container maxWidth="lg">
         <Toolbar disableGutters>
@@ -23,13 +35,13 @@ const NavBar = () => {
             </IconButton>
           </Box>
           <Typography variant="h6" component="h1" noWrap sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            You Are Welcome
+            My Mern
           </Typography>
           <Typography variant="h6" component="h1" noWrap sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            YRW
+            M&M
           </Typography>
           {!currentUser ? (
-            <Button color="inherit" startIcon={<Lock />} onClick={() => dispatch({ type: "UPDATE_USER", payload: user })}>
+            <Button color="inherit" startIcon={<Lock />} onClick={() => dispatch({ type: "OPEN_LOGIN" })}>
               Login
             </Button>
           ) : (
@@ -38,6 +50,7 @@ const NavBar = () => {
         </Toolbar>
       </Container>
     </AppBar>
+    </ThemeProvider>
   );
 };
 
