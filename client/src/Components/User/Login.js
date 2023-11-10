@@ -12,14 +12,15 @@ import { useValue } from "../../Context/ContextProvider";
 import { useEffect, useRef, useState } from "react";
 import { Close, Send } from "@mui/icons-material";
 import PasswordField from "./PasswordField";
+import { register } from "../../actions/user";
 
 const Login = () => {
   const {
     state: { openLogin },
     dispatch,
   } = useValue();
-  const [ title, setTitle ] = useState('Login');
-  const [ isRegister, setIsRegister ] = useState(false);
+  const [title, setTitle] = useState("Login");
+  const [isRegister, setIsRegister] = useState(false);
   const nameRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
@@ -31,15 +32,29 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const email = emailRef.current.value
+    const password = passwordRef.current.value
+    // send login request if it is not register and return
+    const name = nameRef.current.value
+    const confirmPassword = confirmPasswordRef.current.value;
+    if (password !== confirmPassword)
+      return dispatch({
+        type: 'UPDATE_ALERT',
+        payload: {
+          open: true,
+          severity: 'error',
+          message: 'Passwords do not match',
+        },
+      });
+      register({ name, email, password }, dispatch);
   };
 
-  useEffect(()=>{
-    isRegister ? setTitle('Register') : setTitle('Login');
+  useEffect(() => {
+    isRegister ? setTitle("Register") : setTitle("Login");
   }, [isRegister]);
 
   return (
-    <Dialog open={openLogin}
-      onClose={handleClose}>
+    <Dialog open={openLogin} onClose={handleClose}>
       <DialogTitle>
         {title}
         <IconButton
@@ -93,16 +108,18 @@ const Login = () => {
             />
           )}
         </DialogContent>
-        <DialogActions sx={{ px:'19px' }}>
+        <DialogActions sx={{ px: "19px" }}>
           <Button type="submit" variant="contained" endIcon={<Send />}>
             Submit
           </Button>
         </DialogActions>
       </form>
-      <DialogActions sx={{justifyContent:'left', p:'5px 24px'}}>
-        {isRegister?'Do you have an account? Sign in now ' : "Don't you have an account? Create one now "}
+      <DialogActions sx={{ justifyContent: "left", p: "5px 24px" }}>
+        {isRegister
+          ? "Do you have an account? Sign in now "
+          : "Don't you have an account? Create one now "}
         <Button onClick={() => setIsRegister(!isRegister)}>
-            {isRegister ? 'Login' : 'Register'}
+          {isRegister ? "Login" : "Register"}
         </Button>
       </DialogActions>
     </Dialog>
