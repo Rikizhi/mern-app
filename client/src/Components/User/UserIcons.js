@@ -3,8 +3,10 @@ import { useValue } from "../../Context/ContextProvider";
 import { Mail, Notifications } from "@mui/icons-material";
 import { Avatar, Badge, Box, IconButton, Tooltip } from "@mui/material";
 import UserMenu from "./UserMenu";
+import useCheckToken from "../../hooks/useCheckToken";
 
 const UserIcons = () => {
+  useCheckToken();
   const {
     state: { currentUser },
   } = useValue();
