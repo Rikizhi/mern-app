@@ -47,15 +47,16 @@ export const login = tryCatch(async (req, res) => {
 });
 
 export const updateProfile = tryCatch(async (req, res) => {
-  const updateUser = await User.findByIdAndUpdate(req.user.id, req.body, {
+  const { name, age, address, telephone } = req.body;
+  const updateUser = await User.findByIdAndUpdate(req.user.id, { name, age, address, telephone }, {
     new: true,
   });
-  const { _id: id, name, photoURL } = updateUser;
+  const { _id: id, photoURL } = updateUser;
 
-  const token = jwt.sign({ id, name, photoURL }, process.env.JWT_SECRET, {
+  const token = jwt.sign({ id, name, photoURL, age, address, telephone }, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
-  res.status(200).json({ success: true, result: { name, photoURL, token } });
+  res.status(200).json({ success: true, result: { name, photoURL, age, address, telephone, token } });
 });
 
 export const getUsers = tryCatch(async (req, res) => {

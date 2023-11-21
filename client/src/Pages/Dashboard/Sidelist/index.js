@@ -1,4 +1,4 @@
-import { AccountBalance, BarChart, ChevronLeft, Dashboard, Description, Event, Logout, PeopleAlt } from "@mui/icons-material";
+import { AccountBalance, BarChart, ChevronLeft, Dashboard, Description, Edit, Event, Logout, PeopleAlt } from "@mui/icons-material";
 import { Avatar, Box, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Tooltip, Typography, styled } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import { useValue } from "../../../Context/ContextProvider";
@@ -10,6 +10,7 @@ import Reports from "../Reports";
 import Finance from "../Finance";
 import Events from "../Events";
 import Documents from "../Documents";
+import UpdateUser from "../UpdateUser";
 
 const drawerWidth = 240;
 
@@ -103,6 +104,12 @@ const Sidelist = ({ open, setOpen }) => {
         icon: <Description />,
         link: "documents",
         component: <Documents {...{ setSelectedLink, link: "documents" }} />,
+      },
+      {
+        title: "Update User",
+        icon: <Edit />, // Assuming Edit icon from Material UI
+        link: "update-user",
+        component: <UpdateUser {...{ setSelectedLink, link: "update-user" }} />,
       },
     ],
     []

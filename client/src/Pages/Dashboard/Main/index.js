@@ -70,8 +70,7 @@ const Main = ({ setSelectedLink, link }) => {
         </Box>
         <Divider sx={{ mt: 3, mb: 3, opacity: 0.7 }} />
       </Paper>
-      <Paper elevation={3} sx={{ p: 2, gridColumn: "1/3" }}>
-      </Paper>
+      <Paper elevation={3} sx={{ p: 2, gridColumn: "1/3" }}></Paper>
     </Box>
   );
 };
