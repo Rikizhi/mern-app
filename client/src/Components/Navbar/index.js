@@ -16,7 +16,7 @@ const NavBar = () => {
       MuiAppBar: {
         styleOverrides: {
           root: {
-            backgroundColor: '#00B4D8', // Ganti warna latar belakang sesuai keinginan
+            backgroundColor: '#00B4D8',
           },
         },
       },

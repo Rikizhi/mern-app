@@ -20,6 +20,9 @@ const reducer = (state, action) => {
       localStorage.setItem("currentUser", JSON.stringify(action.payload));
       return { ...state, currentUser: action.payload };
 
+    case "UPDATE_USERS":
+      return { ...state, users: action.payload };
+
     default:
       throw new Error("No matched action!");
   }

@@ -6,7 +6,7 @@ import Loading from "./Components/Loading";
 
 function App() {
   return (
-    <>
+    <> 
     <Routing />
     <Login />
     <Notification />

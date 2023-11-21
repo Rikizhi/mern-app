@@ -44,10 +44,7 @@ export const updateProfile = async (currentUser, updatedFields, dispatch) => {
   try {
     if (file) {
       const imageName = uuidv4() + "." + file?.name?.split(".")?.pop();
-      const photoURL = await uploadFile(
-        file,
-        `profile/${currentUser?.id}/${imageName}`
-        );
+      const photoURL = await uploadFile(file, `profile/${currentUser?.id}/${imageName}`);
       body = { ...body, photoURL };
     }
     const result = await fetchData(
@@ -84,4 +81,11 @@ export const updateProfile = async (currentUser, updatedFields, dispatch) => {
   }
 
   dispatch({ type: "END_LOADING" });
+};
+
+export const getUsers = async (dispatch) => {
+  const result = await fetchData({ url, method: "GET" }, dispatch);
+  if (result) {
+    dispatch({ type: "UPDATE_USERS", payload: result });
+  }
 };

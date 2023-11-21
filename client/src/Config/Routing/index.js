@@ -6,11 +6,6 @@ import {
   LoginPage,
   Register,
   ErrorPage,
-  // Reports,
-  // Post,
-  // Team,
-  // Tables,
-  // Account
 } from "../../Pages";
 
 const Routing = () => {
@@ -18,15 +13,10 @@ const Routing = () => {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard/*" element={<Dashboard />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<ErrorPage />} />
-        {/* <Route path="/reports" element={<Reports />} />
-        <Route path="/post" element={<Post />} />
-        <Route path="/team" element={<Team />} />
-        <Route path="/tables" element={<Tables />} />
-        <Route path="/account" element={<Account />} /> */}
       </Routes>
     </Router>
   );
