@@ -2,13 +2,13 @@ import mongoose from "mongoose";
 
 const userSchema = mongoose.Schema(
   {
-    name: { type: String, min: 2, max: 50, required: true},
-    email: { type: String, min: 5, max: 50, required: true, unique: true, trim: true},
+    name: { type: String, min: 2, max: 50, required: true },
+    email: { type: String, min: 5, max: 50, required: true, unique: true, trim: true },
     password: { type: String, required: true },
     photoURL: { type: String, default: "" },
-    age: { type: Number, required: true},
-    address: { type: String, required: true},
-    telephone: { type: String, min: 10, max: 13, required: true, unique: true, trim: true },
+    age: { type: Number, default: "" },
+    address: { type: String, default: "" },
+    telephone: { type: String, min: 10, max: 13, default: "", unique: true, trim: true },
     role: {
       type: String,
       default: "member",

@@ -36,22 +36,22 @@ export const login = tryCatch(async (req, res) => {
   if (!existedUser) return res.status(404).json({ success: false, message: "User does not exist!" });
   const correctPassword = await bcrypt.compare(password, existedUser.password);
   if (!correctPassword) return res.status(400).json({ success: false, message: "Invalid credentials" });
-  const { _id: id, name, photoURL } = existedUser;
+  const { _id: id, name, photoURL, age, address, telephone } = existedUser;
   const token = jwt.sign({ id, name, photoURL }, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
   res.status(200).json({
     success: true,
-    result: { id, name, email: emailLowerCase, photoURL, token },
+    result: { id, name, email: emailLowerCase, photoURL, age, address, telephone, token },
   });
 });
 
 export const updateProfile = tryCatch(async (req, res) => {
-  const { name, age, address, telephone } = req.body;
-  const updateUser = await User.findByIdAndUpdate(req.user.id, { name, age, address, telephone }, {
+  const { name, age, address, telephone, photoURL } = req.body;
+  const updateUser = await User.findByIdAndUpdate(req.user.id, req.body, {
     new: true,
   });
-  const { _id: id, photoURL } = updateUser;
+  const { _id: id } = updateUser;
 
   const token = jwt.sign({ id, name, photoURL, age, address, telephone }, process.env.JWT_SECRET, {
     expiresIn: "1h",
