@@ -5,7 +5,7 @@ import { useValue } from "../../../Context/ContextProvider";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useMemo, useState } from "react";
 import Main from "../Main";
-import Members from "../Members";
+import Users from "../Users";
 import Reports from "../Reports";
 import Finance from "../Finance";
 import Events from "../Events";
@@ -76,10 +76,10 @@ const Sidelist = ({ open, setOpen }) => {
         component: <Main {...{ setSelectedLink, link: "" }} />,
       },
       {
-        title: "Members",
+        title: "Users",
         icon: <PeopleAlt />,
-        link: "members",
-        component: <Members {...{ setSelectedLink, link: "members" }} />,
+        link: "users",
+        component: <Users {...{ setSelectedLink, link: "users" }} />,
       },
       {
         title: "Finance",
