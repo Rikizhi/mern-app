@@ -1,7 +1,7 @@
 import React from "react";
 import { useValue } from "../../Context/ContextProvider";
-import { AppBar, Box, Button, Container, IconButton, Toolbar, Typography } from "@mui/material";
-import { Lock, Menu } from "@mui/icons-material";
+import { AppBar, Box, Button, Container, Toolbar, Typography } from "@mui/material";
+import { Lock} from "@mui/icons-material";
 import UserIcons from "../User/UserIcons";
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 
@@ -29,11 +29,6 @@ const NavBar = () => {
     <AppBar>
       <Container maxWidth="lg">
         <Toolbar disableGutters>
-          <Box sx={{ mr: 1 }}>
-            <IconButton size="large" color="inherit">
-              <Menu />
-            </IconButton>
-          </Box>
           <Typography variant="h6" component="h1" noWrap sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             My Mern
           </Typography>
