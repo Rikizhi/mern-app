@@ -13,7 +13,6 @@ const Routing = () => {
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/dashboard/*" element={<Dashboard />} />
-        <Route path="/register" element={<Register />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>

@@ -1,5 +1,5 @@
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { storage } from './config';
+import { getDownloadURL, ref, uploadBytes, deleteObject } from "firebase/storage";
+import { storage } from "./config";
 
 const uploadFile = (file, filePath) => {
   return new Promise(async (resolve, reject) => {
@@ -13,5 +13,12 @@ const uploadFile = (file, filePath) => {
     }
   });
 };
+
+const deleteFile = (fileUrl) => {
+  const storageRef = ref(storage, fileUrl);
+  return deleteObject(storageRef);
+};
+
+export { uploadFile, deleteFile };
 
 export default uploadFile;

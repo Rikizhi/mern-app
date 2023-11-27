@@ -1,7 +1,7 @@
 import NavBar from "./Navbar";
 import Notification from "./Notification";
+import FileTable from "./FileTable";
 
-export * from "./Atoms";
-export * from "./User/UserIcons"
+export * from "./User/UserIcons";
 
-export { NavBar, Notification };
+export { NavBar, Notification, FileTable };
