@@ -1,21 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
-  IconButton,
-  Modal,
-  Grid,
-  createTheme,
-  TablePagination,
-  TableSortLabel,
-  Checkbox,
-} from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, Modal, Grid, TablePagination, TableSortLabel, Checkbox, Typography, Tooltip, Toolbar } from "@mui/material";
 import FilePreview from "./FilePreview";
 import uploadFile, { deleteFile } from "../../firebase/uploadFile";
 import { v4 as uuidv4 } from "uuid";
@@ -25,9 +9,7 @@ import { Delete, Download, Visibility } from "@mui/icons-material";
 
 // Function to compare values for sorting
 function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
+  return order === "desc" ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
 function descendingComparator(a, b, orderBy) {
@@ -56,7 +38,7 @@ const FileTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedFile, setSelectedFile] = useState([]);
   const [openPreview, setOpenPreview] = useState(false);
-  const { state, dispatch } = useValue();
+  const { dispatch } = useValue();
   const [orderBy, setOrderBy] = useState("");
   const [order, setOrder] = useState("asc");
   const [selected, setSelected] = useState([]);
@@ -84,11 +66,11 @@ const FileTable = () => {
       setSelected([]);
     }
   };
-  
+
   const handleClick = (event, file) => {
     const selectedIndex = selected.findIndex((selectedFile) => selectedFile.id === file.id);
     let newSelected = [];
-  
+
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, file);
     } else if (selectedIndex === 0) {
@@ -96,14 +78,11 @@ const FileTable = () => {
     } else if (selectedIndex === selected.length - 1) {
       newSelected = newSelected.concat(selected.slice(0, -1));
     } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
+      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
-  
+
     setSelected(newSelected);
-  };  
+  };
 
   const isSelected = (file) => selected.indexOf(file) !== -1;
 
@@ -152,10 +131,7 @@ const FileTable = () => {
             url: url,
           };
           filesArray.push(fileObject);
-          localStorage.setItem(
-            `file_${fileObject.id}`,
-            JSON.stringify(fileObject)
-          );
+          localStorage.setItem(`file_${fileObject.id}`, JSON.stringify(fileObject));
         } catch (error) {
           console.error("Failed to upload file:", error.message);
         }
@@ -216,35 +192,89 @@ const FileTable = () => {
     document.body.removeChild(link);
   };
 
-  const handleDelete = async (fileToDelete) => {
+  const handleDeleteSelected = async () => {
     try {
-      await deleteFile(fileToDelete.url); // Menghapus file dari Firebase
-      localStorage.removeItem(`file_${fileToDelete.id}`); // Menghapus dari localStorage
-      const updatedFiles = files.filter((file) => file.id !== fileToDelete.id);
+      dispatch({ type: "START_LOADING" });
+
+      const deletePromises = selected.map(async (fileToDelete) => {
+        await deleteFile(fileToDelete.url); // Menghapus file dari Firebase
+        localStorage.removeItem(`file_${fileToDelete.id}`); // Menghapus dari localStorage
+      });
+
+      await Promise.all(deletePromises);
+
+      const updatedFiles = files.filter((file) => !selected.includes(file));
       setFiles(updatedFiles); // Mengupdate state untuk menghapus file dari tampilan UI
+
+      setSelected([]); // Kosongkan array selected setelah penghapusan
+      dispatch({ type: "END_LOADING" });
+      dispatch({
+        type: "UPDATE_ALERT",
+        payload: {
+          open: true,
+          severity: "success",
+          message: "Files deleted successfully!",
+        },
+      });
     } catch (error) {
-      console.error("Failed to delete file:", error.message);
+      console.error("Failed to delete files:", error.message);
+      dispatch({ type: "END_LOADING" });
+      dispatch({
+        type: "UPDATE_ALERT",
+        payload: {
+          open: true,
+          severity: "error",
+          message: "Failed to delete files!",
+        },
+      });
     }
   };
+
+  function EnhancedTableToolbar(props) {
+    const { numSelected } = props;
+
+    const handleDelete = () => {
+      handleDeleteSelected();
+    };
+
+    return (
+      <Toolbar
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          pl: { sm: 2 },
+          pr: { xs: 1, sm: 1 },
+        }}
+      >
+        {numSelected > 0 ? (
+          <Typography sx={{ flex: "1 1 100%" }} color="inherit" variant="subtitle1" component="div">
+            {numSelected} selected
+          </Typography>
+        ) : (
+          <Typography sx={{ flex: "1 1 100%" }} variant="h6" id="tableTitle" component="div">
+            Dokumen
+          </Typography>
+        )}
+
+        {numSelected > 0 ? (
+          <Tooltip title="Delete">
+            <IconButton sx={{ ml: "auto" }} onClick={handleDelete}>
+              <Delete />
+            </IconButton>
+          </Tooltip>
+        ) : null}
+      </Toolbar>
+    );
+  }
 
   return (
     <div>
       <Grid container spacing={2}>
         <Grid item>
-          <Button
-            component="label"
-            variant="contained"
-            startIcon={<CloudUploadIcon />}
-            style={{ marginBottom: "20px" }}
-          >
+          <Button component="label" variant="contained" startIcon={<CloudUploadIcon />} style={{ marginBottom: "20px" }}>
             Upload File
-            <input
-              type="file"
-              onChange={handleFileUpload}
-              hidden
-              multiple
-              accept=".pdf,.doc,.docx,.jpg,.png"
-            />
+            <input type="file" onChange={handleFileUpload} hidden multiple accept=".pdf,.doc,.docx,.jpg,.png" />
           </Button>
         </Grid>
       </Grid>
@@ -252,16 +282,14 @@ const FileTable = () => {
       <Grid container>
         <Grid item xs={12}>
           <TableContainer component={Paper} sx={{ overflow: "auto" }}>
+            <EnhancedTableToolbar numSelected={selected.length} />
             <Table sx={{ minWidth: 650 }}>
               <TableHead>
                 <TableRow>
                   <TableCell>
                     <Checkbox
                       checked={selected.length === sortedFiles.length}
-                      indeterminate={
-                        selected.length > 0 &&
-                        selected.length < sortedFiles.length
-                      }
+                      indeterminate={selected.length > 0 && selected.length < sortedFiles.length}
                       onChange={handleSelectAllClick}
                       inputProps={{
                         "aria-label": "Select all files",
@@ -269,30 +297,18 @@ const FileTable = () => {
                     />
                   </TableCell>
                   <TableCell>
-                    <TableSortLabel
-                      active={orderBy === "name"}
-                      direction={orderBy === "name" ? order : "asc"}
-                      onClick={() => handleRequestSort("name")}
-                    >
+                    <TableSortLabel active={orderBy === "name"} direction={orderBy === "name" ? order : "asc"} onClick={() => handleRequestSort("name")}>
                       Nama File
                     </TableSortLabel>
                   </TableCell>
                   <TableCell>Tipe File</TableCell>
                   <TableCell>
-                    <TableSortLabel
-                      active={orderBy === "size"}
-                      direction={orderBy === "size" ? order : "asc"}
-                      onClick={() => handleRequestSort("size")}
-                    >
+                    <TableSortLabel active={orderBy === "size"} direction={orderBy === "size" ? order : "asc"} onClick={() => handleRequestSort("size")}>
                       Ukuran File
                     </TableSortLabel>
                   </TableCell>
                   <TableCell>
-                    <TableSortLabel
-                      active={orderBy === "uploadDate"}
-                      direction={orderBy === "uploadDate" ? order : "asc"}
-                      onClick={() => handleRequestSort("uploadDate")}
-                    >
+                    <TableSortLabel active={orderBy === "uploadDate"} direction={orderBy === "uploadDate" ? order : "asc"} onClick={() => handleRequestSort("uploadDate")}>
                       Tanggal Unggah
                     </TableSortLabel>
                   </TableCell>
@@ -300,25 +316,12 @@ const FileTable = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {(rowsPerPage > 0
-                  ? sortedFiles.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                  : sortedFiles
-                ).map((file) => {
+                {(rowsPerPage > 0 ? sortedFiles.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : sortedFiles).map((file) => {
                   const isItemSelected = isSelected(file);
                   const labelId = `enhanced-table-checkbox-${file.id}`;
 
                   return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={file.id}
-                      selected={isItemSelected}
-                    >
+                    <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={file.id} selected={isItemSelected}>
                       <TableCell padding="checkbox">
                         <Checkbox
                           checked={isItemSelected}
@@ -333,26 +336,11 @@ const FileTable = () => {
                       <TableCell>{bytesToMB(file.size)}</TableCell>
                       <TableCell>{file.uploadDate}</TableCell>
                       <TableCell>
-                        <IconButton
-                          sx={{ color: "#fff" }}
-                          aria-label="preview"
-                          onClick={() => handlePreview(file)}
-                        >
+                        <IconButton sx={{ color: "#fff" }} aria-label="preview" onClick={() => handlePreview(file)}>
                           <Visibility />
                         </IconButton>
-                        <IconButton
-                          sx={{ color: "#fff" }}
-                          aria-label="download"
-                          onClick={() => handleDownload(file)}
-                        >
+                        <IconButton sx={{ color: "#fff" }} aria-label="download" onClick={() => handleDownload(file)}>
                           <Download />
-                        </IconButton>
-                        <IconButton
-                          sx={{ color: "#fff" }}
-                          aria-label="delete"
-                          onClick={() => handleDelete(file)}
-                        >
-                          <Delete />
                         </IconButton>
                       </TableCell>
                     </TableRow>
@@ -361,15 +349,7 @@ const FileTable = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={files.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+          <TablePagination rowsPerPageOptions={[5, 10, 25]} component="div" count={files.length} rowsPerPage={rowsPerPage} page={page} onPageChange={handleChangePage} onRowsPerPageChange={handleChangeRowsPerPage} />
         </Grid>
       </Grid>
 
