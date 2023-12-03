@@ -9,6 +9,11 @@ const userSchema = mongoose.Schema(
     age: { type: Number, default: "" },
     address: { type: String, default: "" },
     telephone: { type: String, min: 10, max: 13, default: "", unique: true, trim: true },
+    division: {
+      type: String,
+      default: "",
+      enum: ["anggota", "sekretaris", "bendahara", "wakil", "ketua"],
+    },
     role: {
       type: String,
       default: "member",

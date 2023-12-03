@@ -1,4 +1,4 @@
-import { AccountBalance, BarChart, ChevronLeft, Dashboard, Description, Edit, Event, Logout, PeopleAlt } from "@mui/icons-material";
+import { AccountBalance, BarChart, ChevronLeft, Description, Edit, Event, Logout, PeopleAlt } from "@mui/icons-material";
 import { Avatar, Box, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Tooltip, Typography, styled } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import { useValue } from "../../../Context/ContextProvider";
@@ -6,7 +6,6 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import { useMemo, useState } from "react";
 import Main from "../Main";
 import Users from "../Users";
-import Reports from "../Reports";
 import Finance from "../Finance";
 import Events from "../Events";
 import Documents from "../Documents";
@@ -70,8 +69,8 @@ const Sidelist = ({ open, setOpen }) => {
   const list = useMemo(
     () => [
       {
-        title: "Main",
-        icon: <Dashboard />,
+        title: "Reports",
+        icon: <BarChart />,
         link: "",
         component: <Main {...{ setSelectedLink, link: "" }} />,
       },
@@ -86,12 +85,6 @@ const Sidelist = ({ open, setOpen }) => {
         icon: <AccountBalance />,
         link: "finance",
         component: <Finance {...{ setSelectedLink, link: "finance" }} />,
-      },
-      {
-        title: "Reports",
-        icon: <BarChart />,
-        link: "reports",
-        component: <Reports {...{ setSelectedLink, link: "reports" }} />,
       },
       {
         title: "Events",

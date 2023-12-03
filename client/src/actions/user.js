@@ -16,7 +16,7 @@ export const register = async (user, dispatch) => {
       payload: {
         open: true,
         severity: "success",
-        message: "Your account has been created successfully",
+        message: "Akun anda berhasil dibuat",
       },
     });
   }
@@ -63,7 +63,7 @@ export const updateProfile = async (currentUser, updatedFields, dispatch) => {
         payload: {
           open: true,
           severity: "success",
-          message: "Your profile has been updated successfully",
+          message: "Akun anda berhasil diperbaharui",
         },
       });
       dispatch({ type: "UPDATE_PROFILE", payload: { open: false, file: null, photoURL: result.photoURL } });
@@ -90,13 +90,54 @@ export const getUsers = async (dispatch) => {
   }
 };
 
-export const updateStatus = (updatedFields, userId, dispatch) => {
-  return fetchData(
-    {
-      url: `${url}/updateStatus/${userId}`,
-      method: "PATCH",
-      body: updatedFields,
-    },
-    dispatch
-  );
+export const updateStatus = async (updatedFields, userId, dispatch) => {
+  try {
+    const result = await fetchData(
+      {
+        url: `${url}/updateStatus/${userId}`,
+        method: "PATCH",
+        body: updatedFields,
+      },
+      dispatch
+    );
+
+    if (result) {
+      // Tambahkan notifikasi untuk berhasil menyimpan perubahan pada status user
+      dispatch({
+        type: "UPDATE_ALERT",
+        payload: {
+          open: true,
+          severity: "success",
+          message: "Perubahan pada status user berhasil disimpan",
+        },
+      });
+    }
+    return result;
+  } catch (error) {
+    console.error("Error updating status:", error.message);
+  }
+};
+
+export const addUser = async (user, dispatch) => {
+  try {
+    const result = await fetchData({
+      url: `${url}/addUser`,
+      method: "POST",
+      body: user,
+    }, dispatch);
+
+    if (result) {
+      dispatch({
+        type: "UPDATE_ALERT",
+        payload: {
+          open: true,
+          severity: "success",
+          message: "User berhasil ditambahkan",
+        },
+      });
+    }
+  } catch (error) {
+    // Tangani kesalahan jika ada
+    console.error("Gagal menambahkan pengguna:", error.message);
+  }
 };

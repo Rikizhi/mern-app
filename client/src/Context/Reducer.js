@@ -23,6 +23,9 @@ const reducer = (state, action) => {
     case "UPDATE_USERS":
       return { ...state, users: action.payload };
 
+    case "ADD_USER":
+      return { ...state, users: [...state.users, action.payload] };
+
     default:
       throw new Error("No matched action!");
   }

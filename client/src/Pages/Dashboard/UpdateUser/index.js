@@ -119,8 +119,24 @@ const UpdateUser = ({ setSelectedLink, link }) => {
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12}>
+      <Grid item xs={6}>
         <Typography variant="h5">Biodata User</Typography>
+      </Grid>
+      <Grid item xs={6} container justifyContent="flex-end">
+        {!isEditing && (
+          <>
+            <Button variant="contained" onClick={handleEdit}>
+              Edit
+            </Button>
+          </>
+        )}
+        {isEditing && (
+          <>
+        <Button variant="contained" onClick={handleCancelEdit}>
+          Cancel Edit
+        </Button>
+        </>
+        )}
       </Grid>
       <Grid item xs={12}>
         <TextField label="Nama" name="name" value={formData.name} onChange={handleInputChange} fullWidth disabled={!isEditing} />
@@ -141,18 +157,9 @@ const UpdateUser = ({ setSelectedLink, link }) => {
         </label>
       </Grid>
       <Grid item xs={12}>
-        {isEditing ? (
-          <>
-            <Button variant="contained" onClick={handleSubmit}>
-              Submit
-            </Button>
-            <Button variant="contained" onClick={handleCancelEdit}>
-              Cancel Edit
-            </Button>
-          </>
-        ) : (
-          <Button variant="contained" onClick={handleEdit}>
-            Edit
+        {isEditing && (
+          <Button variant="contained" onClick={handleSubmit}>
+            Submit
           </Button>
         )}
       </Grid>
