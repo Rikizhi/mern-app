@@ -5,9 +5,9 @@ const eventSchema = mongoose.Schema(
     name: { type: String, required: true },
     date: { type: Date, required: true },
     photoURL: { type: String, default: "" },
-    desc: { type: String, max: 50 },
+    desc: { type: String},
     location: { type: String },
-    participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }], // Partisipan kegiatan (mungkin berupa referensi ke koleksi user)
+    // participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }], // Partisipan kegiatan (mungkin berupa referensi ke koleksi user
   },
   { timestamps: true }
 );

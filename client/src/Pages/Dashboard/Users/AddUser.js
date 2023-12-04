@@ -196,7 +196,7 @@ const AddUser = ({ setSelectedLink, link }) => {
           </Grid>
           <Grid item xs={12}>
             <Button variant="contained" onClick={handleSubmit}>
-              Submit
+              Simpan
             </Button>
           </Grid>
         </>

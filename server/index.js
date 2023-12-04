@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import mainRouter from "./routes/mainRouter.js";
 import userRouter from "./routes/userRouter.js";
 import fileRouter from "./routes/fileRouter.js";
+import eventRouter from "./routes/eventRouter.js";
 import mongoose from "mongoose";
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json({ limit: "10mb" }));
+app.use("/event", eventRouter);
 app.use("/file", fileRouter);
 app.use("/user", userRouter);
 app.use("/main", mainRouter);

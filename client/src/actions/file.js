@@ -1,14 +1,10 @@
-import fetchData from "./utils/fetchData";
-import uploadFile from "../firebase/uploadFile";
-import { v4 as uuidv4 } from "uuid";
-
 const fileUrl = process.env.REACT_APP_SERVER_URL + "/file";
 
 export const handleFileUpload = async (file, dispatch) => {
   dispatch({ type: "START_LOADING" });
 
   try {
-    const formData = new FormData();
+    const formData = new FormData();  
     formData.append("file", file);
 
     const result = await fetch(`${fileUrl}/upload`, {
@@ -77,5 +73,3 @@ export const handleDeleteSelected = async (fileId, dispatch) => {
 
   dispatch({ type: "END_LOADING" });
 };
-
-// ... (fungsi-fungsi lain terkait file)
