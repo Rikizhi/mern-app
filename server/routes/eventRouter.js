@@ -1,7 +1,11 @@
 import { Router } from "express";
-import { createEvent } from "../controllers/event.js";
+import { getEvents, addEvent, updateEvent, deleteEvent } from "../controllers/event.js";
 
 const eventRouter = Router();
-eventRouter.post("/createEvent", createEvent);
+
+eventRouter.get("/", getEvents);
+eventRouter.post("/addEvent", addEvent);
+eventRouter.patch("/updateEvent/:id", updateEvent); // Perbaikan pada route
+eventRouter.delete("/deleteEvent/:id", deleteEvent); // Perbaikan pada route
 
 export default eventRouter;

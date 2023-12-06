@@ -26,8 +26,8 @@ const reducer = (state, action) => {
     case "ADD_USER":
       return { ...state, users: [...state.users, action.payload] };
 
-    case "CREATE_EVENT":
-      return { ...state, events: [...state.events, action.payload] };
+    case "UPDATE_EVENTS":
+      return { ...state, events: action.payload };
 
     default:
       throw new Error("No matched action!");

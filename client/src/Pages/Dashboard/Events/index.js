@@ -2,46 +2,33 @@ import { DataGrid, gridClasses } from "@mui/x-data-grid";
 import { Box, Button, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { grey } from "@mui/material/colors";
-import CreateEvent from "./CreateEvent";
+import AddEvent from "./AddEvent";
+import EditEvent from "./EditEvent";
+import { getEvents } from "../../../actions/event";
+import { useValue } from "../../../Context/ContextProvider";
 
 const Events = ({ setSelectedLink, link }) => {
-  const [showCreateEvent, setShowCreateEvent] = useState(false);
-  const [events, setEvents] = useState([]);
+  const { state, dispatch } = useValue();
+  const [showEditEvent, setShowEditEvent] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [showAddEvent, setShowAddEvent] = useState(false);
+
+  const { events } = state;
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/event');
-    
-        if (!response.ok) {
-          throw new Error('Error fetching data');
-        }
-    
-        const data = await response.json();
-        console.log('Data received:', data); // Tambahkan ini untuk log respons yang diterima
-        setEvents(data || []); // Ubah setEvents menjadi data langsung jika strukturnya array
-      } catch (error) {
-        console.error('Error fetching data:', error);
+    setSelectedLink(link);
+    getEvents(dispatch).then((data) => {
+      if (data) {
       }
-    };
-  
-    fetchData();
-  }, []);
-
-  const handleShowForm = () => {
-    setShowCreateEvent(true);
-  };
-
-  const handleBack = () => {
-    setShowCreateEvent(false);
-  };
-
-  const handleCreateEvent = (newEvent) => {
-    setEvents([...events, newEvent]); // Update events array with newly created event
-    handleBack(); // Hide create event form
-  };
+    });
+  }, [dispatch, setSelectedLink, link]);
 
   const columns = [
+    {
+      field: "id",
+      headerName: "ID",
+      width: 100,
+    },
     {
       field: "name",
       headerName: "Nama Kegiatan",
@@ -67,49 +54,47 @@ const Events = ({ setSelectedLink, link }) => {
       headerName: "Lokasi",
       width: 200,
     },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 150,
+      renderCell: (params) => (
+        <button onClick={() => handleEditEvent(params.row)}>Edit</button>
+      ),
+    },
   ];
 
+  const handleEditEvent = (event) => {
+    setSelectedEvent(event);
+    setShowEditEvent(true);
+  };
+
   return (
-    <Box sx={{ width: "90vw", height: "100%" }}>
-      {!showCreateEvent ? (
-        <>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              width: "100%",
-              alignItems: "center",
-              marginBottom: 3,
-            }}
-          >
-            <Typography variant="h3" component="h3" sx={{ textAlign: "center" }}>
-              Kegiatan
-            </Typography>
-            <Button variant="contained" onClick={handleShowForm}>
-              Tambah Kegiatan
-            </Button>
-          </Box>
+    <div style={{ height: 400, width: "100%" }}>
+      {!showEditEvent && !showAddEvent ? (
+        <div>
           <DataGrid
+            rows={events} // Ganti dengan sumber data events Anda
             columns={columns}
-            rows={events}
-            autoHeight
-            autoWidth
-            getRowId={(row) => row.id}
-            getRowSpacing={(params) => ({
-              top: params.isFirstVisible ? 0 : 5,
-              bottom: params.isLastVisible ? 0 : 5,
-            })}
-            sx={{
-              [`& .${gridClasses.row}`]: {
-                bgcolor: (theme) => (theme.palette.mode === "light" ? grey[200] : grey[900]),
-              },
-            }}
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+            onRowClick={(row) => handleEditEvent(row.row)}
           />
-        </>
+          <button onClick={() => setShowAddEvent(true)}>Tambah Event</button>
+        </div>
+      ) : showEditEvent ? (
+        <EditEvent
+          selectedEvent={selectedEvent}
+          setShowEditEvent={setShowEditEvent}
+        />
       ) : (
-        <CreateEvent handleBack={handleBack} handleCreateEvent={handleCreateEvent} />
+        <AddEvent
+          setSelectedLink={setSelectedLink}
+          link={link}
+          setShowAddEvent={setShowAddEvent}
+        />
       )}
-    </Box>
+    </div>
   );
 };
 
