@@ -2,15 +2,17 @@ import React, { useState } from "react";
 import { Grid, TextField, Button, Typography } from "@mui/material";
 import { useValue } from "../../../Context/ContextProvider";
 import uploadFile from "../../../firebase/uploadFile";
-import { createEvent } from "../../../actions/event";
+import { addEvent, getEvents } from "../../../actions/event";
 
 const AddEvent = ({ setSelectedLink, link, setShowAddEvent }) => {
+  const { state, dispatch } = useValue();
+  const [selectedFile, setSelectedFile] = useState(null);
   const [newEvent, setNewEvent] = useState({
-    name: '',
-    date: '',
-    photoURL: '',
-    desc: '',
-    location: '',
+    name: "",
+    date: "",
+    photoURL: "",
+    desc: "",
+    location: "",
   });
 
   const handleInputChange = (e) => {
@@ -18,25 +20,61 @@ const AddEvent = ({ setSelectedLink, link, setShowAddEvent }) => {
     setNewEvent({ ...newEvent, [name]: value });
   };
 
-  const handleImageUpload = async (event) => {
-    const file = event.target.files[0];
+  const handlePhotoChange = (e) => {
+    // Memperoleh file yang dipilih tanpa melakukan unggahan ke Firebase
+    const file = e.target.files[0];
+
+    // Simpan file tersebut dalam state atau variabel yang sesuai
     if (file) {
-      try {
-        const photoURL = await uploadFile(file, 'eventPhotos/' + file.name);
-        setNewEvent({ ...newEvent, photoURL });
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        // Tambahkan logika untuk menangani kesalahan pengunggahan gambar
-      }
+      setSelectedFile(file);
     }
   };
 
-  const handleAddEvent = () => {
-    // Logika untuk menambahkan event ke database
-    // Misalnya, panggil fungsi atau API untuk menyimpan event baru
-    console.log('Menambahkan event ke database:', newEvent);
-    // Kembalikan ke tampilan tabel event
-    setSelectedLink(link);
+  const handleAddEvent = async () => {
+    try {
+      if (selectedFile) {
+        try {
+          // Mengunggah foto ke Firebase hanya saat tombol simpan ditekan
+          const photoURL = await uploadFile(selectedFile, `eventPhotos/${selectedFile.name}`);
+
+          // Simpan URL foto kegiatan ke dalam state atau variabel yang sesuai
+          const updatedEvent = {
+            ...newEvent,
+            photoURL: photoURL,
+          };
+
+          // Setelah berhasil diunggah, simpan data kegiatan ke database
+          await addEvent(updatedEvent, dispatch);
+
+          // Clear input fields or perform any other necessary actions
+          setNewEvent({
+            name: "",
+            date: "",
+            photoURL: "",
+            desc: "",
+            location: "",
+          });
+
+          setSelectedFile(null); // Reset file yang dipilih setelah pengungahan
+          setShowAddEvent(false); // Menghilangkan tampilan form AddEvent setelah berhasil menambah event
+
+          // Ambil kembali data terbaru dari server setelah penambahan berhasil
+          const updatedEvents = await getEvents(dispatch); // Gunakan fungsi getEvents untuk mendapatkan data terbaru
+
+          // Update tampilan dengan data yang baru ditambahkan
+          dispatch({ type: "UPDATE_EVENTS", payload: updatedEvents });
+        } catch (error) {
+          console.error("Error uploading photo to Firebase:", error.message);
+          // Handle error state or display error message to the user
+        }
+      } else {
+        // Jika tidak ada foto yang dipilih, mungkin tampilkan pesan atau lakukan tindakan yang sesuai
+        console.warn("Mohon pilih foto untuk diunggah");
+      }
+    } catch (error) {
+      console.error("Error:", error.message);
+      // Handle error state or display error message to the user
+    }
   };
 
   const handleBack = () => {
@@ -61,7 +99,7 @@ const AddEvent = ({ setSelectedLink, link, setShowAddEvent }) => {
           label="Tanggal Kegiatan"
           type="date"
           name="date"
-          value={newEvent.date}
+          value={newEvent.date.split("T")[0]}
           onChange={handleInputChange}
           fullWidth
           InputLabelProps={{ shrink: true }} // Menghindari tumpang tindih antara label dan format
@@ -71,9 +109,8 @@ const AddEvent = ({ setSelectedLink, link, setShowAddEvent }) => {
           }}
         />
       </Grid>
-
       <Grid item xs={12}>
-        <input accept="image/*" id="eventPhoto" type="file" onChange={handleImageUpload} />
+        <input accept="image/*" id="eventPhoto" type="file" onChange={handlePhotoChange} />
       </Grid>
       <Grid item xs={12}>
         <TextField label="Deskripsi" name="desc" value={newEvent.desc} onChange={handleInputChange} fullWidth />

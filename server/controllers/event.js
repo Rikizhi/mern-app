@@ -15,7 +15,9 @@ export const addEvent = async (req, res) => {
   try {
     const newEvent = new Event({ name, date, photoURL, desc, location });
     const savedEvent = await newEvent.save();
-    res.status(201).json({ success: true, result: savedEvent });
+    const updatedEvents = await Event.find().sort({ createdAt: -1 }); // Ambil data event terbaru setelah penambahan
+
+    res.status(201).json({ success: true, result: updatedEvents });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }

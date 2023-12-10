@@ -120,11 +120,14 @@ export const updateStatus = async (updatedFields, userId, dispatch) => {
 
 export const addUser = async (user, dispatch) => {
   try {
-    const result = await fetchData({
-      url: `${url}/addUser`,
-      method: "POST",
-      body: user,
-    }, dispatch);
+    const result = await fetchData(
+      {
+        url: `${url}/addUser`,
+        method: "POST",
+        body: user,
+      },
+      dispatch
+    );
 
     if (result) {
       dispatch({

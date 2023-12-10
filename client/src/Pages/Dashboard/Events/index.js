@@ -1,4 +1,4 @@
-import { DataGrid, gridClasses } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import { Box, Button, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { grey } from "@mui/material/colors";
@@ -6,6 +6,7 @@ import AddEvent from "./AddEvent";
 import EditEvent from "./EditEvent";
 import { getEvents } from "../../../actions/event";
 import { useValue } from "../../../Context/ContextProvider";
+import moment from "moment";
 
 const Events = ({ setSelectedLink, link }) => {
   const { state, dispatch } = useValue();
@@ -38,11 +39,15 @@ const Events = ({ setSelectedLink, link }) => {
       field: "date",
       headerName: "Tanggal Kegiatan",
       width: 150,
+      renderCell: (params) => moment(params.row.date).format("MM-DD-YYYY"),
     },
     {
       field: "photoURL",
       headerName: "Foto Kegiatan",
       width: 150,
+      renderCell: (params) => (
+        <img src={params.row.photoURL} alt="Event" style={{ width: 50, height: 50 }} />
+      ),
     },
     {
       field: "desc",
@@ -59,7 +64,9 @@ const Events = ({ setSelectedLink, link }) => {
       headerName: "Actions",
       width: 150,
       renderCell: (params) => (
-        <button onClick={() => handleEditEvent(params.row)}>Edit</button>
+        <Button variant="contained" onClick={() => handleEditEvent(params.row)}>
+          Edit
+        </Button>
       ),
     },
   ];
@@ -70,31 +77,53 @@ const Events = ({ setSelectedLink, link }) => {
   };
 
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <Box
+      sx={{
+        width: "90vw",
+        height: "100%",
+      }}
+    >
       {!showEditEvent && !showAddEvent ? (
-        <div>
+        <>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+              alignItems: "center",
+              marginBottom: 3,
+            }}
+          >
+            <Typography variant="h3" component="h3" sx={{ textAlign: "center" }}>
+              Manage Events
+            </Typography>
+            <Button variant="contained" onClick={() => setShowAddEvent(true)}>
+              Tambah Kegiatan
+            </Button>
+          </Box>
           <DataGrid
-            rows={events} // Ganti dengan sumber data events Anda
             columns={columns}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-            onRowClick={(row) => handleEditEvent(row.row)}
+            rows={events}
+            autoHeight
+            autoWidth
+            getRowId={(row) => row._id}
+            getRowSpacing={(params) => ({
+              top: params.isFirstVisible ? 0 : 5,
+              bottom: params.isLastVisible ? 0 : 5,
+            })}
+            sx={{
+              "& .MuiDataGrid-row": {
+                bgcolor: (theme) => (theme.palette.mode === "light" ? grey[200] : grey[900]),
+              },
+            }}
           />
-          <button onClick={() => setShowAddEvent(true)}>Tambah Event</button>
-        </div>
+        </>
       ) : showEditEvent ? (
-        <EditEvent
-          selectedEvent={selectedEvent}
-          setShowEditEvent={setShowEditEvent}
-        />
+        <EditEvent selectedEvent={selectedEvent} setShowEditEvent={setShowEditEvent} dispatch={dispatch} />
       ) : (
-        <AddEvent
-          setSelectedLink={setSelectedLink}
-          link={link}
-          setShowAddEvent={setShowAddEvent}
-        />
+        <AddEvent setSelectedLink={setSelectedLink} link={link} setShowAddEvent={setShowAddEvent} />
       )}
-    </div>
+    </Box>
   );
 };
 
