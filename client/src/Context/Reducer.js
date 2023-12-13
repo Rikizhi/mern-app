@@ -29,6 +29,9 @@ const reducer = (state, action) => {
     case "UPDATE_EVENTS":
       return { ...state, events: action.payload };
 
+    case "UPDATE_DOCUMENTS":
+      return { ...state, documents: action.payload };
+
     default:
       throw new Error("No matched action!");
   }

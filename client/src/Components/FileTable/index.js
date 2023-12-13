@@ -5,7 +5,7 @@ import uploadFile, { deleteFile } from "../../firebase/uploadFile";
 import { v4 as uuidv4 } from "uuid";
 import { useValue } from "../../Context/ContextProvider";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { Delete, Download, Visibility } from "@mui/icons-material";
+import { Delete, Download, Edit, Visibility } from "@mui/icons-material";
 
 // Function to compare values for sorting
 function getComparator(order, orderBy) {
@@ -269,88 +269,73 @@ const FileTable = () => {
   }
 
   return (
-    <div>
-      <Grid container spacing={2}>
-        <Grid item>
-          <Button component="label" variant="contained" startIcon={<CloudUploadIcon />} style={{ marginBottom: "20px" }}>
-            Upload File
-            <input type="file" onChange={handleFileUpload} hidden multiple accept=".pdf,.doc,.docx,.jpg,.png" />
-          </Button>
-        </Grid>
-      </Grid>
-
-      <Grid container>
-        <Grid item xs={12}>
-          <TableContainer component={Paper} sx={{ overflow: "auto" }}>
-            <EnhancedTableToolbar numSelected={selected.length} />
-            <Table sx={{ minWidth: 650 }}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <Checkbox
+                    // ... (seleksi semua dan handler yang sudah ada)
+                  />
+                </TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={orderBy === "name"}
+                    direction={orderBy === "name" ? order : "asc"}
+                    onClick={() => handleRequestSort("name")}
+                  >
+                    Nama File
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>Tipe File</TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={orderBy === "size"}
+                    direction={orderBy === "size" ? order : "asc"}
+                    onClick={() => handleRequestSort("size")}
+                  >
+                    Ukuran File
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={orderBy === "uploadDate"}
+                    direction={orderBy === "uploadDate" ? order : "asc"}
+                    onClick={() => handleRequestSort("uploadDate")}
+                  >
+                    Tanggal Unggah
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>Aksi</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {sortedFiles.map((file) => (
+                <TableRow key={file.id}>
+                  <TableCell padding="checkbox">
                     <Checkbox
-                      checked={selected.length === sortedFiles.length}
-                      indeterminate={selected.length > 0 && selected.length < sortedFiles.length}
-                      onChange={handleSelectAllClick}
-                      inputProps={{
-                        "aria-label": "Select all files",
-                      }}
+                      // ... (seleksi per baris dan handler yang sudah ada)
                     />
                   </TableCell>
+                  <TableCell>{file.name}</TableCell>
+                  <TableCell>{file.type}</TableCell>
+                  <TableCell>{file.size}</TableCell>
+                  <TableCell>{file.uploadDate}</TableCell>
                   <TableCell>
-                    <TableSortLabel active={orderBy === "name"} direction={orderBy === "name" ? order : "asc"} onClick={() => handleRequestSort("name")}>
-                      Nama File
-                    </TableSortLabel>
+                    <IconButton onClick={() => handlePreview(file)}>
+                      <Visibility />
+                    </IconButton>
+                    <IconButton>
+                      <Edit />
+                    </IconButton>
                   </TableCell>
-                  <TableCell>Tipe File</TableCell>
-                  <TableCell>
-                    <TableSortLabel active={orderBy === "size"} direction={orderBy === "size" ? order : "asc"} onClick={() => handleRequestSort("size")}>
-                      Ukuran File
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel active={orderBy === "uploadDate"} direction={orderBy === "uploadDate" ? order : "asc"} onClick={() => handleRequestSort("uploadDate")}>
-                      Tanggal Unggah
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>Aksi</TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {(rowsPerPage > 0 ? sortedFiles.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : sortedFiles).map((file) => {
-                  const isItemSelected = isSelected(file);
-                  const labelId = `enhanced-table-checkbox-${file.id}`;
-
-                  return (
-                    <TableRow hover role="checkbox" aria-checked={isItemSelected} tabIndex={-1} key={file.id} selected={isItemSelected}>
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          onChange={(event) => handleClick(event, file)}
-                          inputProps={{
-                            "aria-labelledby": labelId,
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell>{file.name}</TableCell>
-                      <TableCell>{getFileExtension(file.name)}</TableCell>
-                      <TableCell>{bytesToMB(file.size)}</TableCell>
-                      <TableCell>{file.uploadDate}</TableCell>
-                      <TableCell>
-                        <IconButton sx={{ color: "#fff" }} aria-label="preview" onClick={() => handlePreview(file)}>
-                          <Visibility />
-                        </IconButton>
-                        <IconButton sx={{ color: "#fff" }} aria-label="download" onClick={() => handleDownload(file)}>
-                          <Download />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination rowsPerPageOptions={[5, 10, 25]} component="div" count={files.length} rowsPerPage={rowsPerPage} page={page} onPageChange={handleChangePage} onRowsPerPageChange={handleChangeRowsPerPage} />
-        </Grid>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Grid>
 
       {/* Modal for file preview */}
@@ -377,7 +362,7 @@ const FileTable = () => {
           {selectedFile && <FilePreview file={selectedFile} />}
         </div>
       </Modal>
-    </div>
+    </Grid>
   );
 };
 

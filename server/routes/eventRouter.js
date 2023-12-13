@@ -5,7 +5,7 @@ const eventRouter = Router();
 
 eventRouter.get("/", getEvents);
 eventRouter.post("/addEvent", addEvent);
-eventRouter.patch("/updateEvent/:id", updateEvent); // Perbaikan pada route
-eventRouter.delete("/deleteEvent/:id", deleteEvent); // Perbaikan pada route
+eventRouter.patch("/updateEvent/:id", updateEvent);
+eventRouter.delete("/deleteEvent/:id", deleteEvent);
 
 export default eventRouter;

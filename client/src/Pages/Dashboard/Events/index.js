@@ -1,5 +1,5 @@
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, IconButton, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { grey } from "@mui/material/colors";
 import AddEvent from "./AddEvent";
@@ -7,14 +7,14 @@ import EditEvent from "./EditEvent";
 import { getEvents } from "../../../actions/event";
 import { useValue } from "../../../Context/ContextProvider";
 import moment from "moment";
+import { Edit } from "@mui/icons-material";
 
 const Events = ({ setSelectedLink, link }) => {
   const { state, dispatch } = useValue();
-  const [showEditEvent, setShowEditEvent] = useState(false);
+  const { events } = state;
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showAddEvent, setShowAddEvent] = useState(false);
-
-  const { events } = state;
+  const [showEditEvent, setShowEditEvent] = useState(false);
 
   useEffect(() => {
     setSelectedLink(link);
@@ -24,57 +24,66 @@ const Events = ({ setSelectedLink, link }) => {
     });
   }, [dispatch, setSelectedLink, link]);
 
+  const handleEditEvent = (event) => {
+    setSelectedEvent(event);
+    setShowEditEvent(true);
+  };
+
   const columns = [
-    {
-      field: "id",
-      headerName: "ID",
-      width: 100,
-    },
     {
       field: "name",
       headerName: "Nama Kegiatan",
-      width: 200,
+      width: 250,
     },
     {
       field: "date",
       headerName: "Tanggal Kegiatan",
-      width: 150,
+      width: 250,
       renderCell: (params) => moment(params.row.date).format("MM-DD-YYYY"),
     },
     {
       field: "photoURL",
       headerName: "Foto Kegiatan",
-      width: 150,
+      width: 300,
       renderCell: (params) => (
-        <img src={params.row.photoURL} alt="Event" style={{ width: 50, height: 50 }} />
+        <img
+          src={params.row.photoURL}
+          alt="Event"
+          style={{
+            width: "100%",
+            height: "auto",
+            maxWidth: 200,
+            maxHeight: 200,
+          }}
+        />
       ),
     },
     {
       field: "desc",
       headerName: "Deskripsi",
-      width: 150,
+      width: 300,
     },
     {
       field: "location",
       headerName: "Lokasi",
-      width: 200,
+      width: 300,
+    },
+    {
+      field: "id",
+      headerName: "ID",
+      width: 300,
     },
     {
       field: "actions",
       headerName: "Actions",
       width: 150,
       renderCell: (params) => (
-        <Button variant="contained" onClick={() => handleEditEvent(params.row)}>
-          Edit
-        </Button>
+        <IconButton onClick={() => handleEditEvent(params.row)}>
+          <Edit />
+        </IconButton>
       ),
     },
   ];
-
-  const handleEditEvent = (event) => {
-    setSelectedEvent(event);
-    setShowEditEvent(true);
-  };
 
   return (
     <Box
@@ -83,7 +92,7 @@ const Events = ({ setSelectedLink, link }) => {
         height: "100%",
       }}
     >
-      {!showEditEvent && !showAddEvent ? (
+      {!showAddEvent && !showEditEvent ? (
         <>
           <Box
             sx={{
@@ -104,6 +113,7 @@ const Events = ({ setSelectedLink, link }) => {
           <DataGrid
             columns={columns}
             rows={events}
+            getRowHeight={() => 'auto'}
             autoHeight
             autoWidth
             getRowId={(row) => row._id}
@@ -118,10 +128,10 @@ const Events = ({ setSelectedLink, link }) => {
             }}
           />
         </>
-      ) : showEditEvent ? (
-        <EditEvent selectedEvent={selectedEvent} setShowEditEvent={setShowEditEvent} dispatch={dispatch} />
-      ) : (
+      ) : showAddEvent ? (
         <AddEvent setSelectedLink={setSelectedLink} link={link} setShowAddEvent={setShowAddEvent} />
+      ) : (
+        <EditEvent selectedEvent={selectedEvent} setShowEditEvent={setShowEditEvent} dispatch={dispatch} />
       )}
     </Box>
   );

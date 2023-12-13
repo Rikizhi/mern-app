@@ -1,15 +1,16 @@
-import Event from "../models/Event.js"
+import Event from "../models/Event.js";
+import tryCatch from "./utils/tryCatch.js";
 
-export const getEvents = async (req, res) => {
+export const getEvents = tryCatch(async (req, res) => {
   try {
     const events = await Event.find().sort({ createdAt: -1 });
     res.status(200).json({ success: true, result: events });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
-};
+});
 
-export const addEvent = async (req, res) => {
+export const addEvent = tryCatch(async (req, res) => {
   const { name, date, photoURL, desc, location } = req.body;
 
   try {
@@ -21,9 +22,9 @@ export const addEvent = async (req, res) => {
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
-};
+});
 
-export const updateEvent = async (req, res) => {
+export const updateEvent = tryCatch(async (req, res) => {
   const { id } = req.params;
   const { name, date, photoURL, desc, location } = req.body;
 
@@ -33,9 +34,9 @@ export const updateEvent = async (req, res) => {
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
-};
+});
 
-export const deleteEvent = async (req, res) => {
+export const deleteEvent = tryCatch(async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -44,4 +45,4 @@ export const deleteEvent = async (req, res) => {
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
-};
+});

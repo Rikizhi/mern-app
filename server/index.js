@@ -1,8 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
-import mainRouter from "./routes/mainRouter.js";
 import userRouter from "./routes/userRouter.js";
-import fileRouter from "./routes/fileRouter.js";
+import documentRouter from "./routes/documentRouter.js";
 import eventRouter from "./routes/eventRouter.js";
 import mongoose from "mongoose";
 
@@ -21,9 +20,8 @@ app.use((req, res, next) => {
 
 app.use(express.json({ limit: "10mb" }));
 app.use("/event", eventRouter);
-app.use("/file", fileRouter);
+app.use("/document", documentRouter);
 app.use("/user", userRouter);
-app.use("/main", mainRouter);
 app.get("/", (req, res) => res.json({ message: "Welcome to our API" }));
 app.use((req, res) => res.status(404).json({ success: false, message: "Not Found" }));
 

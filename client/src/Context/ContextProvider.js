@@ -9,6 +9,7 @@ const initialState = {
   profile: { open: false, file: null, photoURL: "" },
   users: [],
   events: [],
+  documents: [],
 };
 
 const Context = createContext(initialState);

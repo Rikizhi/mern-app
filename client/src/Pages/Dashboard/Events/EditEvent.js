@@ -1,9 +1,12 @@
 import { Button, Grid, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { getEvents, updateEvent } from "../../../actions/event";
+import uploadFile from "../../../firebase/uploadFile";
 
-const EditEvent = ({ selectedEvent, setShowEditEvent, dispatch }) => {
+const EditEvent = ({ selectedEvent, setShowEditEvent, handlePhotoChange, dispatch }) => {
   const [editedEvent, setEditedEvent] = useState(selectedEvent);
+  const [previewURL, setPreviewURL] = useState(selectedEvent.photoURL);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -12,16 +15,32 @@ const EditEvent = ({ selectedEvent, setShowEditEvent, dispatch }) => {
 
   const handleUpdateEvent = async () => {
     try {
-      // Panggil fungsi untuk mengupdate event dengan data yang telah diubah
-      await updateEvent(editedEvent, editedEvent.id, dispatch);
-  
-      // Setelah berhasil diupdate, kembalikan ke tampilan tabel event
-      setShowEditEvent(false);
-  
-      // Panggil kembali getEvents untuk mendapatkan data terbaru
-      getEvents(dispatch); // Pastikan getEvents telah didefinisikan di sini
+      if (selectedFile) {
+        // Mengunggah foto baru ke Firebase Storage
+        const photoURL = await uploadFile(selectedFile, `eventPhotos/${selectedFile.name}`);
+
+        // Update URL gambar event di database dengan URL yang baru diunggah
+        const updatedEvent = { ...editedEvent, photoURL }; // Gunakan URL baru untuk gambar event
+        await updateEvent(updatedEvent, editedEvent.id, dispatch);
+
+        // Setelah berhasil diupdate, kembalikan ke tampilan tabel event
+        setShowEditEvent(false);
+
+        // Panggil kembali getEvents untuk mendapatkan data terbaru
+        getEvents(dispatch); // Pastikan getEvents telah didefinisikan di sini
+      } else {
+        // Jika tidak ada gambar yang dipilih, lanjutkan dengan pembaruan lainnya tanpa mengubah gambar
+        const updatedEvent = { ...editedEvent };
+        await updateEvent(updatedEvent, editedEvent.id, dispatch);
+
+        // Setelah berhasil diupdate, kembalikan ke tampilan tabel event
+        setShowEditEvent(false);
+
+        // Panggil kembali getEvents untuk mendapatkan data terbaru
+        getEvents(dispatch); // Pastikan getEvents telah didefinisikan di sini
+      }
     } catch (error) {
-      console.error('Error updating event:', error.message);
+      console.error("Error updating event:", error.message);
       // Handle error state or display error message to the user
     }
   };
@@ -29,7 +48,7 @@ const EditEvent = ({ selectedEvent, setShowEditEvent, dispatch }) => {
   return (
     <Grid container spacing={2}>
       <Grid item xs={6}>
-        <Typography variant="h5">Edit Event</Typography>
+        <Typography variant="h5">Edit Kegiatan</Typography>
       </Grid>
       <Grid item xs={6} container justifyContent="flex-end">
         <Button variant="contained" onClick={() => setShowEditEvent(false)}>
@@ -59,6 +78,15 @@ const EditEvent = ({ selectedEvent, setShowEditEvent, dispatch }) => {
       </Grid>
       <Grid item xs={12}>
         <TextField label="Lokasi" name="location" value={editedEvent.location} onChange={handleInputChange} fullWidth />
+      </Grid>
+      <Grid item xs={12}>
+        {previewURL && <img src={previewURL} alt="Preview" style={{ maxWidth: 250, maxHeight: 250, width: "auto", height: "auto" }} />}
+      </Grid>
+      <Grid item xs={12}>
+        <Button variant="outlined" component="label">
+          Upload Foto
+          <input type="file" accept="image/*" style={{ display: "none" }} onChange={handlePhotoChange} />
+        </Button>
       </Grid>
       <Grid item xs={6}>
         <Button variant="contained" onClick={handleUpdateEvent}>

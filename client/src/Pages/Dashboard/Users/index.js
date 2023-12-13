@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Avatar, Box, Button, Typography } from "@mui/material";
-import { DataGrid, gridClasses } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import { useValue } from "../../../Context/ContextProvider";
 import { getUsers } from "../../../actions/user";
 import moment from "moment";
@@ -18,8 +18,8 @@ const Users = ({ setSelectedLink, link }) => {
   const [showAddUserForm, setShowAddUserForm] = useState(false);
   const [sortModel, setSortModel] = useState([
     {
-      field: 'name',
-      sort: 'asc', // Urutkan kolom 'Nama' secara ascending (asc)
+      field: "name",
+      sort: "asc", // Urutkan kolom 'Nama' secara ascending (asc)
     },
   ]);
 
@@ -152,7 +152,7 @@ const Users = ({ setSelectedLink, link }) => {
               bottom: params.isLastVisible ? 0 : 5,
             })}
             sx={{
-              [`& .${gridClasses.row}`]: {
+              "& .MuiDataGrid-row": {
                 bgcolor: (theme) => (theme.palette.mode === "light" ? grey[200] : grey[900]),
               },
             }}

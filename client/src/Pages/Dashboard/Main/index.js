@@ -4,15 +4,17 @@ import React, { useEffect } from "react";
 import { useValue } from "../../../Context/ContextProvider";
 import { getUsers } from "../../../actions/user";
 import moment from "moment";
+import { getEvents } from "../../../actions/event";
 
 const Main = ({ setSelectedLink, link }) => {
   const {
-    state: { users },
+    state: { users, events },
     dispatch,
   } = useValue();
   useEffect(() => {
     setSelectedLink(link);
     if (users.length === 0) getUsers(dispatch);
+    getEvents(dispatch);
   }, []);
   return (
     <Box
@@ -48,7 +50,7 @@ const Main = ({ setSelectedLink, link }) => {
           }}
         >
           <Event sx={{ height: 100, width: 100, opacity: 0.3, mr: 1 }} />
-          <Typography variant="h4">20</Typography>
+          <Typography variant="h4">{events.length}</Typography> {/* Display total events */}
         </Box>
       </Paper>
       <Paper elevation={3} sx={{ p: 2, gridColumn: 3, gridRow: "1/4" }}>
