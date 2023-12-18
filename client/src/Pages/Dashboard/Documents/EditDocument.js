@@ -1,12 +1,15 @@
 import { Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getDocuments, updateDocument } from "../../../actions/document";
 import uploadFile from "../../../firebase/uploadFile";
 
 const EditDocument = ({ selectedDocument, setShowEditDocument, handleFileChange, dispatch }) => {
   const [editedDocument, setEditedDocument] = useState(selectedDocument);
-  const [previewURL, setPreviewURL] = useState(selectedDocument.fileURL);
   const [selectedFile, setSelectedFile] = useState(null);
+
+  useEffect(() => {
+    setEditedDocument(selectedDocument);
+  }, [selectedDocument]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -15,34 +18,26 @@ const EditDocument = ({ selectedDocument, setShowEditDocument, handleFileChange,
 
   const handleUpdateDocument = async () => {
     try {
+      let updatedFields = { ...editedDocument };
       if (selectedFile) {
-        // Mengunggah foto baru ke Firebase Storage
         const fileURL = await uploadFile(selectedFile, `document/${selectedFile.name}`);
-
-        // Update URL gambar event di database dengan URL yang baru diunggah
-        const updatedDocument = { ...editedDocument, fileURL }; // Gunakan URL baru untuk gambar Document
-        await updateDocument(updatedDocument, editedDocument.id, dispatch);
-
-        // Setelah berhasil diupdate, kembalikan ke tampilan tabel Document
+        updatedFields = { ...editedDocument, fileURL };
+      }
+  
+      // Pastikan _id terdefinisi dan valid di updatedFields sebelum permintaan PATCH
+      if (updatedFields._id) {
+        await updateDocument(updatedFields, updatedFields._id, dispatch);
         setShowEditDocument(false);
-
-        // Panggil kembali getEvents untuk mendapatkan data terbaru
-        getDocuments(dispatch); // Pastikan getDocuments telah didefinisikan di sini
+        const updatedDocuments = await getDocuments(dispatch);
+        dispatch({ type: "UPDATE_DOCUMENTS", payload: updatedDocuments });
       } else {
-        // Jika tidak ada gambar yang dipilih, lanjutkan dengan pembaruan lainnya tanpa mengubah gambar
-        const updatedDocument = { ...editedDocument };
-        await updateDocument(updatedDocument, editedDocument.id, dispatch);
-
-        // Setelah berhasil diupdate, kembalikan ke tampilan tabel Document
-        setShowEditDocument(false);
-
-        // Panggil kembali getDocuments untuk mendapatkan data terbaru
-        getDocuments(dispatch); // Pastikan getEvents telah didefinisikan di sini
+        console.error("ID not defined or invalid");
       }
     } catch (error) {
       console.error("Error updating document:", error.message);
     }
   };
+  
 
   return (
    <Grid container spacing={2}>
@@ -72,7 +67,6 @@ const EditDocument = ({ selectedDocument, setShowEditDocument, handleFileChange,
        </FormControl>
      </Grid>
      <Grid item xs={12}>
-       {previewURL && <img src={previewURL} alt="Preview" style={{ maxWidth: 250, maxHeight: 250, width: "auto", height: "auto" }} />}
      </Grid>
      <Grid item xs={12}>
        <Button variant="outlined" component="label">

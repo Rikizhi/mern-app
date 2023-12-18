@@ -11,12 +11,12 @@ export const getDocuments = tryCatch(async (req, res) => {
 });
 
 export const addDocument = tryCatch(async (req, res) => {
-  const { name, desc, type, size, fileURL } = req.body;
+  const { name, desc, type, size, fileURL, fileType } = req.body;
 
   try {
-    const newDocument = new Document({ name, desc, type, size, fileURL });
+    const newDocument = new Document({ name, desc, type, size, fileURL, fileType });
     const savedDocument = await newDocument.save();
-    const updatedDocuments = await Document.find().sort({ createdAt: -1 }); // Ambil data event terbaru setelah penambahan
+    const updatedDocuments = await Document.find().sort({ createdAt: -1 });
 
     res.status(201).json({ success: true, result: updatedDocuments });
   } catch (error) {
@@ -26,10 +26,10 @@ export const addDocument = tryCatch(async (req, res) => {
 
 export const updateDocument = tryCatch(async (req, res) => {
   const { id } = req.params;
-  const { name, desc, type, size, fileURL } = req.body;
+  const { name, desc, type, fileURL, fileType } = req.body;
 
   try {
-    const updatedDocument = await Document.findByIdAndUpdate(id, { name, desc, type, size, fileURL }, { new: true });
+    const updatedDocument = await Document.findByIdAndUpdate(id, { name, desc, type, fileURL, fileType }, { new: true });
     res.status(200).json({ success: true, result: updatedDocument });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });

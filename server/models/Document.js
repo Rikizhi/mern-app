@@ -2,15 +2,16 @@ import mongoose from "mongoose";
 
 const documentSchema = mongoose.Schema(
   {
-    name: { type: String, default: "", unique: true, required: true },
+    name: { type: String, default: "", required: true },
     desc: { type: String, min: 10, max: 50, default: "" },
     type: {
       type: String,
       default: "",
       enum: ["dokumen", "surat keterangan", "surat resmi", "proposal"],
     },
-    size: { type: Number, default: 0 },
+    size: { type: String, default: "" },
     fileURL: { type: String, default: "" },
+    fileType: { type: String, default: "" }, 
   },
   { timestamps: true }
 );

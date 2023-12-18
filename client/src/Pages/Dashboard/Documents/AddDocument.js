@@ -4,6 +4,20 @@ import { useValue } from "../../../Context/ContextProvider";
 import uploadFile from "../../../firebase/uploadFile";
 import { addDocument, getDocuments } from "../../../actions/document";
 
+const getFileType = (fileName) => {
+  const fileTypes = {
+    pdf: 'application/pdf',
+  };
+
+  const extension = fileName.split('.').pop().toLowerCase();
+  const fileType = fileTypes[extension] || 'Tipe file tidak dikenal';
+  console.log('Extension:', extension);
+  console.log('FileType:', fileType);
+  return fileType;
+};
+
+
+
 const AddDocument = ({ setShowAddDocument }) => {
   const { dispatch } = useValue();
   const [selectedFile, setSelectedFile] = useState(null);
@@ -14,6 +28,7 @@ const AddDocument = ({ setShowAddDocument }) => {
     type: "",
     size: "",
     fileURL: "",
+    fileType: "",
   });
 
   const handleInputChange = (e) => {
@@ -25,6 +40,20 @@ const AddDocument = ({ setShowAddDocument }) => {
     const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
+
+      // Mengambil ukuran file dalam byte
+      const fileSize = file.size;
+
+      const fileType = getFileType(file.name);
+
+      // Mengonversi ukuran file ke KB atau MB untuk kenyamanan pembacaan
+      const fileSizeFormatted = fileSize < 1024 ? `${fileSize} B` : fileSize < 1048576 ? `${(fileSize / 1024).toFixed(2)} KB` : `${(fileSize / 1048576).toFixed(2)} MB`;
+
+      setnewDocument({
+        ...newDocument,
+        size: fileSizeFormatted, // Menyimpan ukuran file yang diformat ke state newDocument
+        fileType: fileType,
+      });
 
       // Membuat pratinjau gambar yang dipilih
       const reader = new FileReader();
@@ -58,6 +87,7 @@ const AddDocument = ({ setShowAddDocument }) => {
             type: "",
             size: "",
             fileURL: "",
+            fileType: "",
           });
 
           setSelectedFile(null); // Reset file yang dipilih setelah pengungahan
@@ -105,7 +135,7 @@ const AddDocument = ({ setShowAddDocument }) => {
       <Grid item xs={12}>
         <FormControl fullWidth>
           <InputLabel id="type-label">Jenis File</InputLabel>
-          <Select labelId="type-label" id="type" name="type" value={setnewDocument.type} label="Type" onChange={handleInputChange}>
+          <Select labelId="type-label" id="type" name="type" value={newDocument.type} label="Type" onChange={handleInputChange}>
             <MenuItem value={"dokumen"}>dokumen</MenuItem>
             <MenuItem value={"surat keterangan"}>surat keterangan</MenuItem>
             <MenuItem value={"surat resmi"}>surat resmi</MenuItem>
@@ -114,7 +144,7 @@ const AddDocument = ({ setShowAddDocument }) => {
         </FormControl>
       </Grid>
       <Grid item xs={12}>
-        {previewURL && <img src={previewURL} alt="Preview" style={{ maxWidth: 250, maxHeight: 250, width: "auto", height: "auto" }} />}
+        {previewURL && <embed src={previewURL} alt="Preview" style={{ maxWidth: 250, maxHeight: 250, width: "auto", height: "auto" }} />}
       </Grid>
       <Grid item xs={12}>
         <Button variant="outlined" component="label">

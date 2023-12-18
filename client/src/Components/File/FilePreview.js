@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FilePreview = ({ file }) => {
+const FilePreviews = ({ file }) => {
   console.log("File URL:", file.url);
   let content = null;
 
@@ -49,4 +49,4 @@ const FilePreview = ({ file }) => {
   );
 };
 
-export default FilePreview;
+export default FilePreviews;
