@@ -73,3 +73,28 @@ export const updateDocument = async (updatedFields, documentId, dispatch) => {
     throw error;
   }
 };
+
+export const deleteDocument = async (documentId, dispatch) => {
+  try {
+    const result = await fetchData(
+      {
+        url: `${url}/deleteDocument/${documentId}`,
+        method: "DELETE",
+      },
+      dispatch
+    );
+
+    if (result) {
+      dispatch({
+        type: "UPDATE_ALERT",
+        payload: {
+          open: true,
+          severity: "success",
+          message: "Document berhasil dihapus",
+        },
+      });
+    }
+  } catch (error) {
+    console.error("Gagal menghapus document:", error.message);
+  }
+};

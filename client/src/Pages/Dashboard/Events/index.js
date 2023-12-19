@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import { grey } from "@mui/material/colors";
 import AddEvent from "./AddEvent";
 import EditEvent from "./EditEvent";
-import { getEvents } from "../../../actions/event";
+import { deleteEvent, getEvents } from "../../../actions/event";
 import { useValue } from "../../../Context/ContextProvider";
 import moment from "moment";
-import { Edit } from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 
 const Events = ({ setSelectedLink, link }) => {
   const { state, dispatch } = useValue();
@@ -28,6 +28,19 @@ const Events = ({ setSelectedLink, link }) => {
     setSelectedEvent(event);
     setShowEditEvent(true);
   };
+
+  const handleDeleteEvent = async (eventId) => {
+    try {
+      await deleteEvent(eventId, dispatch);
+
+      // Ambil kembali data terbaru dari server setelah penghapusan berhasil
+      const updatedEvents = await getEvents(dispatch);
+      dispatch({ type: "UPDATE_EVENTS", payload: updatedEvents });
+    } catch (error) {
+      console.error("Error deleting event:", error.message);
+    }
+  };
+  
 
   const columns = [
     {
@@ -78,9 +91,14 @@ const Events = ({ setSelectedLink, link }) => {
       headerName: "Actions",
       width: 150,
       renderCell: (params) => (
+        <div>
         <IconButton onClick={() => handleEditEvent(params.row)}>
           <Edit />
         </IconButton>
+        <IconButton onClick={() => handleDeleteEvent(params.row.id)}>
+        <Delete />
+      </IconButton>
+        </div>
       ),
     },
   ];

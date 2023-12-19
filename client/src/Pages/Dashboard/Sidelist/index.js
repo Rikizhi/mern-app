@@ -80,12 +80,12 @@ const Sidelist = ({ open, setOpen }) => {
         link: "users",
         component: <Users {...{ setSelectedLink, link: "users" }} />,
       },
-      {
-        title: "Finance",
-        icon: <AccountBalance />,
-        link: "finance",
-        component: <Finance {...{ setSelectedLink, link: "finance" }} />,
-      },
+      // {
+      //   title: "Finance",
+      //   icon: <AccountBalance />,
+      //   link: "finance",
+      //   component: <Finance {...{ setSelectedLink, link: "finance" }} />,
+      // },
       {
         title: "Events",
         icon: <Event />,

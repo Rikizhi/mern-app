@@ -36,6 +36,27 @@ const AddEvent = ({ setShowAddEvent }) => {
   };
 
   const handleAddEvent = async () => {
+    const fieldsToValidate = ["name", "date", "desc", "location"];
+    const isFormValid = fieldsToValidate.every((field) => newEvent[field].trim() !== "");
+
+    if (!isFormValid || !selectedFile) {
+      try {
+        throw new Error("Tolong isi semua kolom terlebih dahulu");
+      } catch (error) {
+        console.error("Error:", error.message);
+        // Tambahkan dispatch untuk menampilkan pesan error
+        dispatch({
+          type: "UPDATE_ALERT",
+          payload: {
+            open: true,
+            severity: "error",
+            message: error.message,
+          },
+        });
+      }
+      return;
+    }
+
     try {
       if (selectedFile) {
         try {
@@ -60,30 +81,27 @@ const AddEvent = ({ setShowAddEvent }) => {
             location: "",
           });
 
-          setSelectedFile(null); // Reset file yang dipilih setelah pengungahan
-          setShowAddEvent(false); // Menghilangkan tampilan form AddEvent setelah berhasil menambah event
+          setSelectedFile(null);
+          setShowAddEvent(false);
 
           // Ambil kembali data terbaru dari server setelah penambahan berhasil
-          const updatedEvents = await getEvents(dispatch); // Gunakan fungsi getEvents untuk mendapatkan data terbaru
+          const updatedEvents = await getEvents(dispatch);
 
           // Update tampilan dengan data yang baru ditambahkan
           dispatch({ type: "UPDATE_EVENTS", payload: updatedEvents });
         } catch (error) {
           console.error("Error uploading photo to Firebase:", error.message);
-          // Handle error state or display error message to the user
         }
       } else {
-        // Jika tidak ada foto yang dipilih, mungkin tampilkan pesan atau lakukan tindakan yang sesuai
         console.warn("Mohon pilih foto untuk diunggah");
       }
     } catch (error) {
       console.error("Error:", error.message);
-      // Handle error state or display error message to the user
     }
   };
 
   const handleBack = () => {
-    setShowAddEvent(false); // Menghilangkan tampilan form AddEvent
+    setShowAddEvent(false);
   };
 
   return (

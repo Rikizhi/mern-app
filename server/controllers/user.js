@@ -33,6 +33,10 @@ export const login = tryCatch(async (req, res) => {
   const { email, password } = req.body;
   const emailLowerCase = email.toLowerCase();
   const existedUser = await User.findOne({ email: emailLowerCase });
+
+  if (!existedUser || !(await bcrypt.compare(password, existedUser.password))) {
+    return res.status(401).json({ success: false, message: "Invalid email or password" });
+  }
   if (!existedUser) return res.status(404).json({ success: false, message: "User tidak tersedia!" });
   const correctPassword = await bcrypt.compare(password, existedUser.password);
   if (!correctPassword) return res.status(400).json({ success: false, message: "Pengisian tidak valid" });

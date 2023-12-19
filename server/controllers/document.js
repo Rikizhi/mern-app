@@ -35,3 +35,14 @@ export const updateDocument = tryCatch(async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 });
+
+export const deleteDocument = tryCatch(async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await Document.findByIdAndDelete(id);
+    res.status(200).json({ success: true, result: "Document deleted successfully" });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { getEvents, updateEvent } from "../../../actions/event";
 import uploadFile from "../../../firebase/uploadFile";
 
-const EditEvent = ({ selectedEvent, setShowEditEvent, handlePhotoChange, dispatch }) => {
+const EditEvent = ({ selectedEvent, setShowEditEvent, dispatch }) => {
   const [editedEvent, setEditedEvent] = useState(selectedEvent);
   const [previewURL, setPreviewURL] = useState(selectedEvent.photoURL);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -11,6 +11,20 @@ const EditEvent = ({ selectedEvent, setShowEditEvent, handlePhotoChange, dispatc
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditedEvent({ ...editedEvent, [name]: value });
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+
+      // Membuat pratinjau gambar yang dipilih
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewURL(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleUpdateEvent = async () => {

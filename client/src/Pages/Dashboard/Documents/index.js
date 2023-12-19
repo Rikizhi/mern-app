@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
-import { Visibility, Edit } from "@mui/icons-material";
-import { getDocuments } from "../../../actions/document";
+import { Visibility, Edit, Delete } from "@mui/icons-material";
+import { deleteDocument, getDocuments } from "../../../actions/document";
 import { useValue } from "../../../Context/ContextProvider";
 import moment from "moment";
 import { grey } from "@mui/material/colors";
@@ -44,6 +44,18 @@ const DocumentTable = ({ setSelectedLink, link }) => {
     setShowPreviewModal(false);
   };
 
+  const handleDeleteDocument = async (documentId) => {
+    try {
+      await deleteDocument(documentId, dispatch);
+
+      // Ambil kembali data terbaru dari server setelah penghapusan berhasil
+      const updatedDocuments = await getDocuments(dispatch);
+      dispatch({ type: "UPDATE_DOCUMENTS", payload: updatedDocuments });
+    } catch (error) {
+      console.error("Error deleting document:", error.message);
+    }
+  };
+
   const columns = [
     {
       field: "name",
@@ -75,7 +87,7 @@ const DocumentTable = ({ setSelectedLink, link }) => {
     {
       field: "fileURL",
       headerName: "FIle",
-      width: 150,
+      width: 400,
       renderCell: (params) => (
         <embed
           src={params.row.fileURL}
@@ -83,8 +95,8 @@ const DocumentTable = ({ setSelectedLink, link }) => {
           style={{
             width: "100%",
             height: "auto",
-            maxWidth: 200,
-            maxHeight: 200,
+            maxWidth: 500,
+            maxHeight: 500,
           }}
         />
       ),
@@ -101,11 +113,14 @@ const DocumentTable = ({ setSelectedLink, link }) => {
       width: 150,
       renderCell: (params) => (
         <div>
-          <IconButton>
+          {/* <IconButton>
             <Visibility onClick={() => handlePreviewFile(params.row.fileURL)} />
-          </IconButton>
+          </IconButton> */}
           <IconButton onClick={() => handleEditDocument(params.row.id)}>
             <Edit />
+          </IconButton>
+          <IconButton onClick={() => handleDeleteDocument(params.row.id)}>
+            <Delete />
           </IconButton>
         </div>
       ),
@@ -160,30 +175,27 @@ const DocumentTable = ({ setSelectedLink, link }) => {
         <EditDocument selectedDocument={selectedDocument} setShowEditDocument={setShowEditDocument} dispatch={dispatch} />
       )}
       {showPreviewModal && (
-      <Modal
-        open={showPreviewModal}
-        onClose={handleClosePreview}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          backgroundColor: 'white',
-          border: '2px solid #000',
-          boxShadow: 24,
-          p: 4,
-          maxWidth: '90%',
-          maxHeight: '90%',
-          overflow: 'auto',
-        }}>
-          {selectedFile && <Preview fileURL={selectedFile} />} {/* Mengirim URL file untuk ditampilkan */}
-          <Button onClick={handleClosePreview}>Close Preview</Button>
-        </div>
-      </Modal>
-    )}
+        <Modal open={showPreviewModal} onClose={handleClosePreview} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              backgroundColor: "white",
+              border: "2px solid #000",
+              boxShadow: 24,
+              p: 4,
+              maxWidth: "90%",
+              maxHeight: "90%",
+              overflow: "auto",
+            }}
+          >
+            {selectedFile && <Preview fileURL={selectedFile} />} {/* Mengirim URL file untuk ditampilkan */}
+            <Button onClick={handleClosePreview}>Close Preview</Button>
+          </div>
+        </Modal>
+      )}
     </Box>
   );
 };

@@ -27,7 +27,7 @@ const Main = ({ setSelectedLink, link }) => {
         flexDirection: "column",
       }}
     >
-      <Paper elevation={3} sx={{ p: 3 }}>
+      <Paper elevation={3} sx={{ p: 2, gridColumn: "1/3" }}>
         <Typography variant="h4">Total Members</Typography>
         <Box
           sx={{
@@ -40,7 +40,7 @@ const Main = ({ setSelectedLink, link }) => {
           <Typography variant="h4">{users.length}</Typography>
         </Box>
       </Paper>
-      <Paper elevation={3} sx={{ p: 3 }}>
+      <Paper elevation={3} sx={{ p: 2, gridColumn: "1/3" }}>
         <Typography variant="h4">Total Events</Typography>
         <Box
           sx={{
@@ -57,7 +57,7 @@ const Main = ({ setSelectedLink, link }) => {
         <Box>
           <Typography>Recently added Members</Typography>
           <List>
-            {users.slice(0, 4).map((user, i) => (
+            {users.slice(0, 5).map((user, i) => (
               <Box key={user._id}>
                 <ListItem>
                   <ListItemAvatar>
@@ -72,7 +72,7 @@ const Main = ({ setSelectedLink, link }) => {
         </Box>
         <Divider sx={{ mt: 3, mb: 3, opacity: 0.7 }} />
       </Paper>
-      <Paper elevation={3} sx={{ p: 2, gridColumn: "1/3" }}></Paper>
+      {/* <Paper elevation={3} sx={{ p: 2, gridColumn: "1/3" }}></Paper> */}
     </Box>
   );
 };

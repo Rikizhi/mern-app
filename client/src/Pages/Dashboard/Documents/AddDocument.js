@@ -144,7 +144,7 @@ const AddDocument = ({ setShowAddDocument }) => {
         </FormControl>
       </Grid>
       <Grid item xs={12}>
-        {previewURL && <embed src={previewURL} alt="Preview" style={{ maxWidth: 250, maxHeight: 250, width: "auto", height: "auto" }} />}
+        {previewURL && <embed src={previewURL} alt="Preview" style={{ maxWidth: 500, maxHeight: 500, width: 400, height: 300 }} />}
       </Grid>
       <Grid item xs={12}>
         <Button variant="outlined" component="label">
