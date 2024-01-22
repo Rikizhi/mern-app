@@ -11,10 +11,10 @@ export const getEvents = tryCatch(async (req, res) => {
 });
 
 export const addEvent = tryCatch(async (req, res) => {
-  const { name, date, photoURL, desc, location } = req.body;
+  const { name, date, photoURL, desc, location, done } = req.body;
 
   try {
-    const newEvent = new Event({ name, date, photoURL, desc, location });
+    const newEvent = new Event({ name, date, photoURL, desc, location, done });
     const savedEvent = await newEvent.save();
     const updatedEvents = await Event.find().sort({ createdAt: -1 }); // Ambil data event terbaru setelah penambahan
 
@@ -26,10 +26,10 @@ export const addEvent = tryCatch(async (req, res) => {
 
 export const updateEvent = tryCatch(async (req, res) => {
   const { id } = req.params;
-  const { name, date, photoURL, desc, location } = req.body;
+  const { name, date, photoURL, desc, location, done } = req.body;
 
   try {
-    const updatedEvent = await Event.findByIdAndUpdate(id, { name, date, photoURL, desc, location }, { new: true });
+    const updatedEvent = await Event.findByIdAndUpdate(id, { name, date, photoURL, desc, location, done }, { new: true });
     res.status(200).json({ success: true, result: updatedEvent });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });

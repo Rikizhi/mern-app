@@ -1,4 +1,4 @@
-import { Button, Grid, TextField, Typography } from "@mui/material";
+import { Button, Checkbox, FormControlLabel, Grid, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { getEvents, updateEvent } from "../../../actions/event";
 import uploadFile from "../../../firebase/uploadFile";
@@ -25,6 +25,14 @@ const EditEvent = ({ selectedEvent, setShowEditEvent, dispatch }) => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setEditedEvent({
+      ...editedEvent,
+      [name]: checked,
+    });
   };
 
   const handleUpdateEvent = async () => {
@@ -92,6 +100,9 @@ const EditEvent = ({ selectedEvent, setShowEditEvent, dispatch }) => {
       </Grid>
       <Grid item xs={12}>
         <TextField label="Lokasi" name="location" value={editedEvent.location} onChange={handleInputChange} fullWidth />
+      </Grid>
+      <Grid item xs={12}>
+        <FormControlLabel control={<Checkbox checked={editedEvent.done} onChange={handleCheckboxChange} name="done" />} label="Kegiatan Terlaksana" />
       </Grid>
       <Grid item xs={12}>
         {previewURL && <img src={previewURL} alt="Preview" style={{ maxWidth: 250, maxHeight: 250, width: "auto", height: "auto" }} />}

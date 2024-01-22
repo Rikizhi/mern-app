@@ -77,6 +77,12 @@ const Events = ({ setSelectedLink, link }) => {
       width: 300,
     },
     {
+      field: "done",
+      headerName: "Terlaksana",
+      type: "boolean",
+      width: 100,
+    },
+    {
       field: "location",
       headerName: "Lokasi",
       width: 300,

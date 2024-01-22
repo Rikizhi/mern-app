@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grid, TextField, Button, Typography } from "@mui/material";
+import { Grid, TextField, Button, Typography, FormControlLabel, Checkbox } from "@mui/material";
 import { useValue } from "../../../Context/ContextProvider";
 import uploadFile from "../../../firebase/uploadFile";
 import { addEvent, getEvents } from "../../../actions/event";
@@ -14,6 +14,7 @@ const AddEvent = ({ setShowAddEvent }) => {
     photoURL: "",
     desc: "",
     location: "",
+    done: false,
   });
 
   const handleInputChange = (e) => {
@@ -33,6 +34,14 @@ const AddEvent = ({ setShowAddEvent }) => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setNewEvent({
+      ...newEvent,
+      [name]: checked,
+    });
   };
 
   const handleAddEvent = async () => {
@@ -79,6 +88,7 @@ const AddEvent = ({ setShowAddEvent }) => {
             photoURL: "",
             desc: "",
             location: "",
+            done: false,
           });
 
           setSelectedFile(null);
@@ -137,6 +147,9 @@ const AddEvent = ({ setShowAddEvent }) => {
       </Grid>
       <Grid item xs={12}>
         <TextField label="Lokasi" name="location" value={newEvent.location} onChange={handleInputChange} fullWidth />
+      </Grid>
+      <Grid item xs={12}>
+        <FormControlLabel control={<Checkbox checkbox={newEvent.done} onChange={handleCheckboxChange} name="done" />} label="Kegiatan Terlaksana" />
       </Grid>
       <Grid item xs={12}>
         {previewURL && <img src={previewURL} alt="Preview" style={{ maxWidth: 250, maxHeight: 250, width: "auto", height: "auto" }} />}

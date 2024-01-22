@@ -35,17 +35,17 @@ const AppBar = styled(MuiAppBar, {
 
 export default function Dashboard() {
   const [open, setOpen] = useState(false);
-  const [dark, setDark] = useState(true);
+  // const [dark, setDark] = useState(true);
 
-  const darkTheme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode: dark ? 'dark' : 'light',
-        },
-      }),
-    [dark]
-  );
+  // const darkTheme = useMemo(
+  //   () =>
+  //     createTheme({
+  //       palette: {
+  //         mode: dark ? 'dark' : 'light',
+  //       },
+  //     }),
+  //   [dark]
+  // );
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -53,7 +53,7 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
   return (
-    <ThemeProvider theme={darkTheme}>
+    // <ThemeProvider theme={darkTheme}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="fixed" open={open}>
@@ -83,13 +83,13 @@ export default function Dashboard() {
             >
               Dashboard
             </Typography>
-            <IconButton onClick={() => setDark(!dark)}>
+            {/* <IconButton onClick={() => setDark(!dark)}>
               {dark ? <Brightness7 /> : <Brightness4 />}
-            </IconButton>
+            </IconButton> */}
           </Toolbar>
         </AppBar>
         <SideList {...{ open, setOpen }} />
       </Box>
-    </ThemeProvider>
+    // </ThemeProvider>
   );
 }
