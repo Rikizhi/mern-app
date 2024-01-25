@@ -18,7 +18,8 @@ const DocumentTable = ({ setSelectedLink, link }) => {
   const [showEditDocument, setShowEditDocument] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedFileType, setSelectedFileType] = useState(null);
-  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewFile, setPreviewFile] = useState(null);
 
   useEffect(() => {
     setSelectedLink(link);
@@ -34,14 +35,13 @@ const DocumentTable = ({ setSelectedLink, link }) => {
   };
 
   const handlePreviewFile = (fileUrl, fileType) => {
+    setPreviewFile({ fileUrl, fileType });
     setSelectedFile(fileUrl);
-    setSelectedFileType(fileType);
-    setShowPreviewModal(true);
+    setPreviewOpen(true);
   };
 
   const handleClosePreview = () => {
-    setSelectedFile(null);
-    setShowPreviewModal(false);
+    setPreviewOpen(false);
   };
 
   const handleDeleteDocument = async (documentId) => {
@@ -89,16 +89,9 @@ const DocumentTable = ({ setSelectedLink, link }) => {
       headerName: "FIle",
       width: 400,
       renderCell: (params) => (
-        <embed
-          src={params.row.fileURL}
-          alt="File"
-          style={{
-            width: "100%",
-            height: "auto",
-            maxWidth: 500,
-            maxHeight: 500,
-          }}
-        />
+        <div>
+          <Button onClick={() => handlePreviewFile(params.row.fileURL, params.row.fileType)}>Preview</Button>
+        </div>
       ),
     },
     {
@@ -174,8 +167,8 @@ const DocumentTable = ({ setSelectedLink, link }) => {
       ) : (
         <EditDocument selectedDocument={selectedDocument} setShowEditDocument={setShowEditDocument} dispatch={dispatch} />
       )}
-      {showPreviewModal && (
-        <Modal open={showPreviewModal} onClose={handleClosePreview} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+      {previewOpen && (
+        <Modal open={previewOpen} onClose={handleClosePreview} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
           <div
             style={{
               position: "absolute",

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grid, TextField, Button, Typography, FormControlLabel, Checkbox } from "@mui/material";
+import { Grid, TextField, Button, Typography, FormControlLabel, Checkbox, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { useValue } from "../../../Context/ContextProvider";
 import uploadFile from "../../../firebase/uploadFile";
 import { addEvent, getEvents } from "../../../actions/event";
@@ -149,7 +149,14 @@ const AddEvent = ({ setShowAddEvent }) => {
         <TextField label="Lokasi" name="location" value={newEvent.location} onChange={handleInputChange} fullWidth />
       </Grid>
       <Grid item xs={12}>
-        <FormControlLabel control={<Checkbox checkbox={newEvent.done} onChange={handleCheckboxChange} name="done" />} label="Kegiatan Terlaksana" />
+        <FormControl fullWidth>
+          <InputLabel id="done-label">Keterangan Kegiatan</InputLabel>
+          <Select labelId="done-label" id="done" name="done" value={newEvent.done} label="Keterangan Kegiatan" onChange={handleInputChange}>
+            <MenuItem value={"terlaksana"}>Terlaksana</MenuItem>
+            <MenuItem value={"belum terlaksana"}>Belum Terlaksana</MenuItem>
+            <MenuItem value={"tidak terlaksana"}>Tidak Terlaksana</MenuItem>
+          </Select>
+        </FormControl>
       </Grid>
       <Grid item xs={12}>
         {previewURL && <img src={previewURL} alt="Preview" style={{ maxWidth: 250, maxHeight: 250, width: "auto", height: "auto" }} />}

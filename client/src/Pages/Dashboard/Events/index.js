@@ -40,7 +40,6 @@ const Events = ({ setSelectedLink, link }) => {
       console.error("Error deleting event:", error.message);
     }
   };
-  
 
   const columns = [
     {
@@ -53,6 +52,13 @@ const Events = ({ setSelectedLink, link }) => {
       headerName: "Tanggal Kegiatan",
       width: 250,
       renderCell: (params) => moment(params.row.date).format("MM-DD-YYYY"),
+    },
+    {
+      field: "done",
+      headerName: "Keterangan Kegiatan",
+      type: "singleSelect",
+      valueOptions: ["terlaksana", "belum terlaksana", "tidak terlaksana"],
+      width: 200,
     },
     {
       field: "photoURL",
@@ -76,12 +82,7 @@ const Events = ({ setSelectedLink, link }) => {
       headerName: "Deskripsi",
       width: 300,
     },
-    {
-      field: "done",
-      headerName: "Terlaksana",
-      type: "boolean",
-      width: 100,
-    },
+
     {
       field: "location",
       headerName: "Lokasi",
@@ -98,12 +99,12 @@ const Events = ({ setSelectedLink, link }) => {
       width: 150,
       renderCell: (params) => (
         <div>
-        <IconButton onClick={() => handleEditEvent(params.row)}>
-          <Edit />
-        </IconButton>
-        <IconButton onClick={() => handleDeleteEvent(params.row.id)}>
-        <Delete />
-      </IconButton>
+          <IconButton onClick={() => handleEditEvent(params.row)}>
+            <Edit />
+          </IconButton>
+          <IconButton onClick={() => handleDeleteEvent(params.row.id)}>
+            <Delete />
+          </IconButton>
         </div>
       ),
     },
@@ -137,7 +138,7 @@ const Events = ({ setSelectedLink, link }) => {
           <DataGrid
             columns={columns}
             rows={events}
-            getRowHeight={() => 'auto'}
+            getRowHeight={() => "auto"}
             autoHeight
             autoWidth
             getRowId={(row) => row._id}

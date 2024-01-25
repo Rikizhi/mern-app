@@ -1,4 +1,4 @@
-import { Button, Checkbox, FormControlLabel, Grid, TextField, Typography } from "@mui/material";
+import { Button, Checkbox, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { getEvents, updateEvent } from "../../../actions/event";
 import uploadFile from "../../../firebase/uploadFile";
@@ -102,7 +102,14 @@ const EditEvent = ({ selectedEvent, setShowEditEvent, dispatch }) => {
         <TextField label="Lokasi" name="location" value={editedEvent.location} onChange={handleInputChange} fullWidth />
       </Grid>
       <Grid item xs={12}>
-        <FormControlLabel control={<Checkbox checked={editedEvent.done} onChange={handleCheckboxChange} name="done" />} label="Kegiatan Terlaksana" />
+        <FormControl fullWidth>
+          <InputLabel id="done-label">Keterangan Kegiatan</InputLabel>
+          <Select labelId="done-label" id="done" name="done" value={editedEvent.done} label="Keterangan Kegiatan" onChange={handleInputChange}>
+            <MenuItem value={"terlaksana"}>Terlaksana</MenuItem>
+            <MenuItem value={"belum terlaksana"}>Belum Terlaksana</MenuItem>
+            <MenuItem value={"tidak terlaksana"}>Tidak Terlaksana</MenuItem>
+          </Select>
+        </FormControl>
       </Grid>
       <Grid item xs={12}>
         {previewURL && <img src={previewURL} alt="Preview" style={{ maxWidth: 250, maxHeight: 250, width: "auto", height: "auto" }} />}
